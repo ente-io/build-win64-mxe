@@ -8,10 +8,10 @@ $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 $(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
-$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
+$(PKG)_DEPS     := cc meson-wrapper libwebp glib libarchive \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
-                   libspng libimagequant highway imagemagick matio openexr \
-                   cfitsio nifticlib poppler fftw openslide libjxl cgif
+                   libspng libimagequant highway \
+                   fftw cgif expat
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -85,11 +85,16 @@ define $(PKG)_BUILD
         -Ddeprecated=false \
         -Dexamples=false \
         -Dintrospection=disabled \
-        -Dmodules=enabled \
-        -Dheif-module=$(if $(IS_HEVC),enabled,disabled) \
-        $(if $(findstring graphicsmagick,$($(PKG)_DEPS)), -Dmagick-package=GraphicsMagick) \
+        -Dcplusplus=false \
+        -Dmodules=disabled \
+        -Dheif=enabled \
+        -Dmagick=disabled \
         -Dpdfium=disabled \
         -Dquantizr=disabled \
+        -Dpangocairo=disabled \
+        -Dpoppler=disabled \
+        -Drsvg=disabled \
+        -Dopenslide=disabled \
         -Dc_args='$(CFLAGS) -DVIPS_DLLDIR_AS_LIBDIR' \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
